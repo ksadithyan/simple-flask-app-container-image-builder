@@ -37,3 +37,51 @@ Access the endpoints in your browser:
 
 ## ⚠️ Major Issues with Traditional Docker Builder
 Traditional builds face efficiency and security challenges such as redownloading packages, secret leaks via `ENV`, `COPY`/`RM`, or `--build-arg`, architecture lock-in, and sequential execution of independent stages.
+
+---
+
+# 🔧 BuildKit
+
+A modern approach that deals with the above issues.
+
+```bash
+docker buildx build -t adithyan/web-app .
+```
+
+Use these as fixes for the major issues above.
+
+### 1. Slow rebuilds → cache mount
+Caches downloaded files between builds and speeds up building.
+
+```dockerfile
+RUN --mount=type=cache,target=/root/.cache/pip <the command you need to run>
+```
+Change `target` to the cache folder of your tool (for example `pip`).
+
+### 2. Secret leaks → secret mount
+The secret is available only during that one `RUN` and leaves no trace in the image.
+
+```dockerfile
+RUN --mount=type=secret,id=mykey <the command you need to run>
+```
+
+When you build, pass the secret from outside. Here the key is in a `key.txt` file in the same folder:
+
+```bash
+docker buildx build --secret id=mykey,src=./key.txt -t myapp .
+```
+
+### 3. Architecture lock-in → multi-platform build
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t ksadithyan/webapp .
+```
+(You can give any proper name.)
+
+Finish the command with `--push` to push it to the registry under a single name as a multi-arch manifest:
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t ksadithyan/webapp --push .
+```
+
+### 4. Sequential stages → parallel by default
+BuildKit executes independent build stages side by side with zero additional effort.
