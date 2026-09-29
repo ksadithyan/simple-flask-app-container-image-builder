@@ -6,4 +6,4 @@
 2) make sure u have docker installed
 3) docker build -t adithyan/my-app .   
 
-\# -t is the name/tag and the '.' represent the Dockerfile in the current dir
+Note:  -t is the name/tag and the '.' represent the Dockerfile in the current dir
