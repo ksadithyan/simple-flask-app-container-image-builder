@@ -7,3 +7,9 @@
 3) docker build -t adithyan/my-app .   
 
 Note:  -t is the name/tag and the '.' represent the Dockerfile in the current dir
+
+4) docker run -p 5000:5000 adithyan/my-app:latest
+5) in web browser try the following 
+   1) localhost:5000
+   2) localhost:5000/how-are-you
+6) Successfully see the two messages -welcome and - I'm fine. How are you? 
